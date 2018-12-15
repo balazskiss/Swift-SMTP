@@ -11,10 +11,10 @@ let package = Package(
             targets: ["SwiftSMTP"]),
         ],
     dependencies: [
-        .package(url: "https://github.com/IBM-Swift/BlueSocket.git", from: "1.0.0"),
-        .package(url: "https://github.com/IBM-Swift/BlueSSLService.git", from: "1.0.0"),
-        .package(url: "https://github.com/IBM-Swift/BlueCryptor.git", from: "1.0.0"),
-        .package(url: "https://github.com/IBM-Swift/LoggerAPI.git", from: "1.7.0"),
+        .package(url: "https://github.com/IBM-Swift/BlueSocket.git", .exact("1.0.25")),
+        .package(url: "https://github.com/IBM-Swift/BlueSSLService.git", .exact("1.0.25")),
+        .package(url: "https://github.com/IBM-Swift/BlueCryptor.git", .exact("1.0.20")),
+        .package(url: "https://github.com/IBM-Swift/LoggerAPI.git", .exact("1.7.3")),
         ],
     targets: [
         .target(
