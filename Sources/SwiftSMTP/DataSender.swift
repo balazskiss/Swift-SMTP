@@ -186,8 +186,22 @@ extension DataSender {
             }
         #endif
 
+        let maxLineLength = 75
         let encodedHTML = html.base64Encoded
-        try send(encodedHTML)
+        let numberOfLines = Int((Float(encodedHTML.count) / Float(maxLineLength)).rounded(.up))
+        for lineIndex in 0..<numberOfLines {
+            let startIndex: Int = lineIndex * maxLineLength
+            let endIndex: Int = startIndex + maxLineLength
+            let lowerBound: String.Index = encodedHTML.index(encodedHTML.startIndex, offsetBy: startIndex)
+            let upperBound: String.Index
+            if lineIndex == numberOfLines - 1 {
+                upperBound = encodedHTML.endIndex
+            } else {
+                upperBound = encodedHTML.index(encodedHTML.startIndex, offsetBy: endIndex)
+            }
+            let line = encodedHTML[lowerBound..<upperBound]
+            try send(String(line))
+        }
 
         #if os(macOS)
             cache.setObject(encodedHTML as AnyObject, forKey: html as AnyObject)
