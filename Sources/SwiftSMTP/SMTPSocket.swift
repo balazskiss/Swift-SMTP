@@ -76,12 +76,21 @@ struct SMTPSocket {
 private extension SMTPSocket {
     func readFromSocket() throws -> String {
         var buf = Data()
-        _ = try socket.read(into: &buf)
-        guard let responses = String(data: buf, encoding: .utf8) else {
-            throw SMTPError.convertDataUTF8Fail(data: buf)
+        // Read until we get a complete SMTP response.
+        // Multi-line responses use "XXX-" (dash) for continuation and "XXX " (space) for the final line.
+        while true {
+            _ = try socket.read(into: &buf)
+            guard let partial = String(data: buf, encoding: .utf8) else {
+                throw SMTPError.convertDataUTF8Fail(data: buf)
+            }
+            let lines = partial.components(separatedBy: CRLF).filter { !$0.isEmpty }
+            if let last = lines.last,
+               last.count >= 4,
+               last[last.index(last.startIndex, offsetBy: 3)] == " " {
+                Log.debug(partial)
+                return partial
+            }
         }
-        Log.debug(responses)
-        return responses
     }
 
     @discardableResult
